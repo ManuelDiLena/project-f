@@ -8,6 +8,8 @@ import { verifyToken } from './middlewares/auth.js';
 import { requireRole } from './middlewares/roles.js';
 import { db } from './config/firestore.js';
 import profileRoutes from './routes/profileRoutes.js';
+import teamsRoutes from './routes/teamsRoutes.js';
+import fieldsRoutes from './routes/fieldsRoutes.js';
 
 dotenv.config();
 
@@ -59,6 +61,8 @@ app.get('/api/v1/hello', (req, res) => {
 });
 
 app.use('/api/v1', profileRoutes);
+app.use('/api/v1', teamsRoutes);
+app.use('/api/v1', fieldsRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
