@@ -23,6 +23,7 @@ router.post('/fields', verifyToken, requireRole('adminField'), async (req, res) 
     };
     await fieldRef.set(fieldData);
     res.status(201).json({ id: fieldRef.id, ...fieldData });
+
   } catch (err) {
     console.error('Error creating field:', err);
     res.status(500).json({ error: 'The field could not be created' });
@@ -38,6 +39,7 @@ router.get('/fields/:id', verifyToken, async (req, res) => {
       return res.status(404).json({ error: 'Field not found' });
     }
     res.json({ id: doc.id, ...doc.data() });
+
   } catch (err) {
     console.error('Error getting field:', err);
     res.status(500).json({ error: 'Could not get field' });
@@ -65,6 +67,7 @@ router.put('/fields/:id', verifyToken, async (req, res) => {
     };
     await db.collection('fields').doc(id).update(updates);
     res.json({ message: "Field updated successfully", updates });
+    
   } catch (err) {
     console.error('Error updating Field:', err);
     res.status(500).json({ error: 'Could not update Field' });

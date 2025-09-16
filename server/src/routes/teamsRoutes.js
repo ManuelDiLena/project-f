@@ -20,6 +20,7 @@ router.post('/teams', verifyToken, async (req, res) => {
     };
     await teamRef.set(teamData);
     res.status(201).json({ id: teamRef.id, ...teamData });
+    
   } catch (err) {
     console.error('Error creating team:', err);
     res.status(500).json({ error: 'The team could not be created' });
@@ -35,6 +36,7 @@ router.get('/teams/:id', verifyToken, async (req, res) => {
       return res.status(404).json({ error: 'Team not found' });
     }
     res.json({ id: doc.id, ...doc.data() });
+
   } catch (err) {
     console.error('Error getting team:', err);
     res.status(500).json({ error: 'Could not get team' });
@@ -60,6 +62,7 @@ router.put('/teams/:id', verifyToken, async (req, res) => {
     };
     await db.collection('teams').doc(id).update(updates);
     res.json({ message: "Team updated successfully", updates });
+
   } catch (err) {
     console.error('Error updating team:', err);
     res.status(500).json({ error: 'Could not update team' });

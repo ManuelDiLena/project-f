@@ -18,7 +18,8 @@ router.post('/users', verifyToken, async (req, res) => {
       createdAt: new Date(),
     };
     await db.collection('users').doc(uid).set(userDoc);
-    res.status(201).json({ message: 'Successfully created profile', user: userDoc });
+    res.status(201).json({ message: 'Successfully created profile', id: uid, ...userDoc });
+
   } catch (err) {
     console.error('Error creating profile:', err);
     res.status(500).json({ error: 'The profile could not be created' });
@@ -29,11 +30,15 @@ router.post('/users', verifyToken, async (req, res) => {
 router.get('/users/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
+    if (id === 'me') {
+      id = req.user.uid;
+    }
     const doc = await db.collection('users').doc(id).get();
     if (!doc.exists) {
       return res.status(404).json({ error: 'User not found' });
     }
     res.json({ id: doc.id, ...doc.data() });
+
   } catch (err) {
     console.error('Error getting profile:', err);
     res.status(500).json({ error: 'Could not get profile' });
@@ -58,6 +63,7 @@ router.put('/users/:id', verifyToken, async (req, res) => {
     };
     await db.collection('users').doc(id).update(updates);
     res.json({ message: 'Profile updated successfully', updates });
+    
   } catch (err) {
     console.error('Error updating profile:', err);
     res.status(500).json({ error: 'Could not update profile' });

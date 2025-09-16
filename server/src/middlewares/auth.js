@@ -6,7 +6,12 @@ export async function verifyToken(req, res, next) {
   const token = header.split(' ')[1];
   try {
     const decoded = await admin.auth().verifyIdToken(token);
-    req.user = decoded;
+    const user = await admin.auth().getUser(decoded.uid);
+    req.user = {
+      uid: decoded.uid,
+      email: decoded.email,
+      role: user.customClaims?.role || 'player',
+    };
     next();
   } catch (err) {
     res.status(401).json({ error: 'Invalid token' });
