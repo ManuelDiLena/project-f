@@ -5,11 +5,11 @@ import { verifyToken } from '../middlewares/auth.js';
 const router = express.Router();
 
 // Create player profile
-router.post('/users', verifyToken, async (req, res) => {
+router.post('/players', verifyToken, async (req, res) => {
   try {
     const { uid } = req.user;
     const { name, age, position, availability, location } = req.body;
-    const userDoc = {
+    const playerDoc = {
       name,
       age,
       position,
@@ -17,40 +17,40 @@ router.post('/users', verifyToken, async (req, res) => {
       location,
       createdAt: new Date(),
     };
-    await db.collection('users').doc(uid).set(userDoc);
-    res.status(201).json({ message: 'Successfully created profile', id: uid, ...userDoc });
+    await db.collection('players').doc(uid).set(playerDoc);
+    res.status(201).json({ message: 'Successfully created player', id: uid, ...playerDoc });
 
   } catch (err) {
-    console.error('Error creating profile:', err);
-    res.status(500).json({ error: 'The profile could not be created' });
+    console.error('Error creating player:', err);
+    res.status(500).json({ error: 'The player could not be created' });
   }
 });
 
 // Get player profile
-router.get('/users/:id', verifyToken, async (req, res) => {
+router.get('/players/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     if (id === 'me') {
       id = req.user.uid;
     }
-    const doc = await db.collection('users').doc(id).get();
+    const doc = await db.collection('players').doc(id).get();
     if (!doc.exists) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'Player not found' });
     }
     res.json({ id: doc.id, ...doc.data() });
 
   } catch (err) {
-    console.error('Error getting profile:', err);
-    res.status(500).json({ error: 'Could not get profile' });
+    console.error('Error getting player:', err);
+    res.status(500).json({ error: 'Could not get player' });
   }
 });
 
 // Update player profile
-router.put('/users/:id', verifyToken, async (req, res) => {
+router.put('/players/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     if (req.user.uid !== id) {
-      return res.status(403).json({ error: 'No permission to edit this profile' });
+      return res.status(403).json({ error: 'No permission to edit this player' });
     }
     const { name, age, position, availability, location } = req.body;
     const updates = {
@@ -61,12 +61,12 @@ router.put('/users/:id', verifyToken, async (req, res) => {
       ...(location && { location }),
       updatedAt: new Date(),
     };
-    await db.collection('users').doc(id).update(updates);
-    res.json({ message: 'Profile updated successfully', updates });
+    await db.collection('players').doc(id).update(updates);
+    res.json({ message: 'Player updated successfully', updates });
     
   } catch (err) {
-    console.error('Error updating profile:', err);
-    res.status(500).json({ error: 'Could not update profile' });
+    console.error('Error updating player:', err);
+    res.status(500).json({ error: 'Could not update player' });
   }
 });
 
